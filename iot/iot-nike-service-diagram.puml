@@ -1,0 +1,67 @@
+@startuml
+
+left to right direction
+
+actor user <<human>>
+
+rectangle IOT <<device>> {
+(interface) as i
+component "wearable\ndevice" as device
+(sensor) as s
+}
+
+rectangle "Smart Phone" {
+ component device as spd
+ component interface as spi
+ spd -right- spi
+}
+
+rectangle "Mac PC" {
+ component device as mac
+}
+
+rectangle "Nike" {
+ component cloud as nike
+}
+
+actor nike <<human>> as employee
+
+user -down-> device
+device -left-> i
+device -right-> s
+device <-- spd
+device --> spd
+user ---> mac
+mac -right-> spd
+
+device ---> nike
+device <--- nike
+spd <--- nike
+
+nike ---> employee
+nike <--- employee
+
+
+@enduml
+
+
+
+rectangle "cloud gateway" {
+ component gateway as c
+}
+
+rectangle "api backbone" {
+ (microservice) as ms1
+ (microservice) as ms2
+}
+
+rectangle "cloud storage" {
+ (postgres) as ds1
+ (cassandra) as ds2
+}
+
+g <--> c
+c <--> ms1
+c <--> ms2
+ds1 <-left-> ms1
+ds2 <-left-> ms2
