@@ -1,0 +1,51 @@
+@startuml
+
+participant scheduler as client
+participant "result queue" as result
+participant "task queue" as task
+participant worker
+participant autopilot
+
+== Initialization ==
+client -> client: startup
+client -> task: initialize
+client <-- task:
+
+client -> result: initialize
+client <-- result:
+
+client -> autopilot: add queues
+client <-- autopilot:
+
+== process run ==
+
+alt scheduler starts up workers
+loop N + 1
+client -> worker: start worker
+worker -> autopilot: find queues
+worker <-- autopilot:
+client <-- worker:
+end
+else workers start self
+worker -> worker: start up
+worker -> autopilot: find queues
+worker <-- autopilot:
+end
+loop tasks
+worker -> task: get task
+task --> worker: task
+worker -> result: send results
+result --> worker:
+end
+
+loop results
+client -> result: get result
+result --> client: results
+
+client -> task: send tasks
+client <-- task:
+
+
+end
+
+@enduml
