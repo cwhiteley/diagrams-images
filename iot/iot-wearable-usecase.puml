@@ -1,45 +1,34 @@
 @startuml
 
 left to right direction
-skinparam packageStyle rectangle
-
 
 actor user <<human>>
 rectangle IOT <<device>> {
-component interface as i
+(interface) as i
 component "wearable\ndevice" as device
-component sensor as s
+(sensor) as s
 }
 
 rectangle "field gateway" {
- component gateway as g
+ component gateway as field
 }
 
-rectangle "cloud gateway" {
- component gateway as c
+rectangle "Cloud System "{
+ component gateway as cloud
+ component "frontend\nservice" as front
+ component "backend\nservice" as back
+ component "identity\nservice" as id
 }
-
-rectangle "api backbone" {
- (microservice) as ms1
- (microservice) as ms2
-}
-
-rectangle "cloud storage" {
- (postgres) as ds1
- (cassandra) as ds2
-}
-
 
 user -down-> device
-device -left-> i : reports
-device -right-> s: observers
-device <- g: updates
-device -> g: data
-
-g <--> c : https
-c <--> ms1: https
-c <--> ms2: https
-ds1 <-up-> ms1: https
-ds2 <-up-> ms2: https
+device -left-> i
+device -right-> s
+device <- field
+device -> field
+field <-d-> cloud
+cloud <-d-> front
+front <-d-> back
+front <-d-> id
+back <--l--> id
 
 @enduml
